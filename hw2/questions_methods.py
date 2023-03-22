@@ -1,7 +1,7 @@
 from scipy.interpolate import lagrange
 import random
 from sklearn import tree
-from hw2 import read_file, find_best_split, make_tree, print_tree, test_sklearn_tree, test_tree
+from hw2 import read_file, find_best_split, make_tree, print_tree, test_sklearn_tree, test_tree, plot
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -43,6 +43,8 @@ def q2_7():
     training_set = instances_list[:8192]
     test_set = instances_list[8192:]
 
+    node_count = []
+    err_list = []
     for i in range(5):
         size = pow(2, 5 + i * 2)
         current_training_set = training_set[:size]
@@ -50,12 +52,22 @@ def q2_7():
         root = make_tree(current_training_set)
         print('node_count_{} = {}'.format(size, root.count_nodes()))
         print('err_{} = {}'.format(size, test_tree(root, test_set)))
-        # plot(root, 'D_{}:'.format(size))
+        node_count.append(root.count_nodes())
+        err_list.append(test_tree(root, test_set))
+        plot(root, 'D_{}:'.format(size))
+
+    plt.scatter(node_count, err_list)
+    plt.xlabel('node count')
+    plt.ylabel('err')
+    plt.title('learning curve')
+    plt.show()
+
+    return instances_list
 
 
 def q2_7_2():
-    node_count = [13, 19, 55, 139, 281]
-    err = [0.11172566371681415, 0.0702433628318584, 0.05918141592920354, 0.046460176991150445, 0.020464601769911505]
+    node_count = [21, 27, 57, 127, 267]
+    err = [0.19690265486725664, 0.059734513274336286, 0.05807522123893805, 0.035398230088495575, 0.01991150442477876]
     plt.scatter(node_count, err)
     plt.xlabel('node count')
     plt.ylabel('err')
@@ -64,9 +76,7 @@ def q2_7_2():
     plt.show()
 
 
-def q3():
-    instances_list = read_file('data/Dbig.txt')
-    random.shuffle(instances_list)
+def q3(instances_list):
     training_set = instances_list[:8192]
     test_set = instances_list[8192:]
 
@@ -88,7 +98,7 @@ def q3():
     plt.scatter(node_count, err_list)
     plt.xlabel('node count')
     plt.ylabel('err')
-    plt.title('learning curve')
+    plt.title('sklearn tree learning curve')
     plt.show()
 
 
@@ -118,11 +128,12 @@ def q4():
     print('train_error: {}'.format(train_error))
     print('noise_test_error: {}'.format(noise_test_error))
 
-# q2_3()
+
+q2_3()
 # q2_4()
 # q2_5()
 # q2_6()
-# q2_7()
+# i_l = q2_7()
 # q2_7_2()
-# q3()
+# q3(i_l)
 # q4()

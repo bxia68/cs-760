@@ -80,7 +80,7 @@ def find_best_split(instances: list[Instance]) -> Split | None:
             if instance.features[feature] == prev_val:
                 continue
             current_info = get_gain_ratio(instances, index)
-            # print('split: feature_{} \\geq {} \\\\'.format(feature, instance.features[feature]))
+            print('split: feature_{} \\geq {} \\\\'.format(feature, instance.features[feature]))
             # print('GainRatio = {} \\\\'.format(current_info))
             if current_info > max_info:
                 max_info = current_info
@@ -101,19 +101,25 @@ def get_gain_ratio(instances: list[Instance], split_index: int) -> float:
     left_split = instances[split_index:]
     right_split = instances[:split_index]
 
-    if not left_split or not right_split:
-        return 0.0
-
     unconditional_entropy = get_entropy(count_labels(instances), len(instances))
-
+    # print('unconditional_entropy =', unconditional_entropy)
     left_conditional = get_entropy(count_labels(left_split), len(left_split))
     right_conditional = get_entropy(count_labels(right_split), len(right_split))
 
     conditional_entropy = (len(left_split) / len(instances) * left_conditional +
                            len(right_split) / len(instances) * right_conditional)
-
+    # print('conditional_entropy =', conditional_entropy)
     info_gain = unconditional_entropy - conditional_entropy
-    gain_ratio = info_gain / get_entropy((len(left_split), len(right_split)), len(instances))
+    split_entropy = get_entropy((len(left_split), len(right_split)), len(instances))
+    print('InfoGain:', info_gain)
+
+
+
+    if split_entropy == 0:
+    # print('InfoGain:', info_gain)
+        return 0
+
+    gain_ratio = info_gain / split_entropy
     return gain_ratio
 
 
